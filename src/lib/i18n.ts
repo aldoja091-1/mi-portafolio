@@ -35,29 +35,29 @@ export const es = {
       },
     ],
   },
-  learn: {
-    title: "Learning Path",
-    certs: [
-      { title: "Lean Six Sigma White Belt", sub: "Mejora continua" },
-      { title: "Power BI", sub: "Santander Open Academy" },
-      { title: "Gestión de Proyectos Ágil", sub: "Metodologías ágiles" },
+  skills: {
+    title: "Habilidades",
+    cats: [
+      { name: "Procesos y Calidad", items: ["AMEF", "5 Porqués", "Análisis de Causa Raíz", "Reducción de Desperdicio"] },
+      { name: "Mejora Continua", items: ["Lean Manufacturing", "Six Sigma", "5S", "Metodología Ágil"] },
+      { name: "Automatización y Control", items: ["Sistemas de Control", "Robótica Industrial", "ESP32", "Arduino", "LabVIEW"] },
+      { name: "Software y Datos", items: ["Python", "C", "MATLAB", "Power BI", "Excel", "SAP", "PLATO"] },
+      { name: "Diseño e Ingeniería", items: ["CATIA", "SolidWorks", "CAD/CAM"] },
     ],
+  },
+  learn: {
+    title: "Certificaciones",
+    tabs: { industria: "Industria y Mejora Continua", lobomentoria: "Liderazgo", finanzas: "Finanzas" },
+    close: "Cerrar",
     langTitle: "Idiomas",
     langs: ["Inglés Profesional", "Alemán", "Francés"],
-  },
-  repo: {
-    title: "Repositorio rápido",
-    cats: [
-      { name: "Desarrollo de Software y Datos", items: ["Python", "C", "MATLAB", "Power BI", "Excel"] },
-      { name: "Automatización y Hardware", items: ["ESP32", "Arduino", "LabVIEW", "Robótica Industrial"] },
-      { name: "Ingeniería y Diseño", items: ["SAP", "PLATO", "CATIA", "SolidWorks (CAD/CAM)"] },
-    ],
   },
   blog: {
     title: "Casos de estudio",
     soon: "Próximamente",
     cases: ["Render 3D · CATIA", "Render 3D · SolidWorks", "Interfaz · LabVIEW", "Dashboard · Power BI", "Circuito · ESP32", "Línea de prensas"],
   },
+  words: ["Lean", "Six Sigma", "Kaizen", "5S", "DMAIC", "Calidad", "AMEF", "Poka-Yoke", "Muda", "Takt Time", "OEE", "SMED", "Gemba", "Kanban", "Mejora Continua", "Causa Raíz", "Cero Defectos", "VSM"],
   footer: "Aldo Justo Alonso",
 };
 
@@ -100,29 +100,29 @@ export const en: Dict = {
       },
     ],
   },
-  learn: {
-    title: "Learning Path",
-    certs: [
-      { title: "Lean Six Sigma White Belt", sub: "Continuous improvement" },
-      { title: "Power BI", sub: "Santander Open Academy" },
-      { title: "Agile Project Management", sub: "Agile methodologies" },
+  skills: {
+    title: "Skills",
+    cats: [
+      { name: "Process & Quality", items: ["FMEA", "5 Whys", "Root Cause Analysis", "Waste Reduction"] },
+      { name: "Continuous Improvement", items: ["Lean Manufacturing", "Six Sigma", "5S", "Agile Methodology"] },
+      { name: "Automation & Control", items: ["Control Systems", "Industrial Robotics", "ESP32", "Arduino", "LabVIEW"] },
+      { name: "Software & Data", items: ["Python", "C", "MATLAB", "Power BI", "Excel", "SAP", "PLATO"] },
+      { name: "Design & Engineering", items: ["CATIA", "SolidWorks", "CAD/CAM"] },
     ],
+  },
+  learn: {
+    title: "Certifications",
+    tabs: { industria: "Industry & Continuous Improvement", lobomentoria: "Leadership", finanzas: "Finance" },
+    close: "Close",
     langTitle: "Languages",
     langs: ["Professional English", "German", "French"],
-  },
-  repo: {
-    title: "Quick repository",
-    cats: [
-      { name: "Software & Data Development", items: ["Python", "C", "MATLAB", "Power BI", "Excel"] },
-      { name: "Automation & Hardware", items: ["ESP32", "Arduino", "LabVIEW", "Industrial Robotics"] },
-      { name: "Engineering & Design", items: ["SAP", "PLATO", "CATIA", "SolidWorks (CAD/CAM)"] },
-    ],
   },
   blog: {
     title: "Case studies",
     soon: "Coming soon",
     cases: ["3D Render · CATIA", "3D Render · SolidWorks", "Interface · LabVIEW", "Dashboard · Power BI", "Circuit · ESP32", "Press line"],
   },
+  words: ["Lean", "Six Sigma", "Kaizen", "5S", "DMAIC", "Quality", "FMEA", "Poka-Yoke", "Muda", "Takt Time", "OEE", "SMED", "Gemba", "Kanban", "Continuous Improvement", "Root Cause", "Zero Defects", "VSM"],
   footer: "Aldo Justo Alonso",
 };
 
