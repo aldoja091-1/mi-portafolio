@@ -127,4 +127,5 @@ export const en: Dict = {
 };
 
 export const dict = { es, en };
+export type Dict = typeof es;
 export type Lang = keyof typeof dict;
