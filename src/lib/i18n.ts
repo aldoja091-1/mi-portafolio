@@ -3,7 +3,7 @@ export const es = {
   hero: {
     name: "Aldo Justo Alonso",
     role: "Ingeniero Mecatrónico | Procesos, Mejora Continua y Automatización",
-    video: "video aquí",
+    video: "Video aquí",
     caption: "Procesos que funcionan. Sistemas que se automatizan.",
   },
   exp: {
