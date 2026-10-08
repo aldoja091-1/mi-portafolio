@@ -3,7 +3,7 @@ export const es = {
   hero: {
     name: "Aldo Justo Alonso",
     role: "Ingeniero Mecatrónico | Procesos, Mejora Continua y Automatización",
-    video: "Tu video aquí",
+    video: "video aquí",
     caption: "Procesos que funcionan. Sistemas que se automatizan.",
   },
   exp: {
@@ -68,7 +68,7 @@ export const en: Dict = {
   hero: {
     name: "Aldo Justo Alonso",
     role: "Mechatronics Engineer | Processes, Continuous Improvement & Automation",
-    video: "Your video here",
+    video: "video here",
     caption: "Processes that work. Systems that automate.",
   },
   exp: {
