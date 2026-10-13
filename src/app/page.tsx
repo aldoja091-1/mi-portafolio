@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   AnimatePresence,
+  animate,
   motion,
+  useAnimationFrame,
+  useMotionValue,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -22,8 +25,14 @@ const certificados: Cert[] = [
   { title: "Liderazgo Estoico", file: "/certificados/liderazgo-estoico.jpg", cat: "industria" },
   { title: "LUMI", file: "/certificados/lumi.jpg", cat: "industria" },
   { title: "White Belt", file: "/certificados/white-belt.jpg", cat: "industria" },
+  { title: "Yellow Belt", file: "/certificados/yellow-belt.jpg", cat: "industria" },
+  { title: "Gestión de Proyectos y Fundamentos de Metodología Agile", file: "/certificados/agile.jpg", cat: "industria" },
+  { title: "Power BI", file: "/certificados/powerbi.jpg", cat: "industria" },
+  { title: "ISO 9001:2015 Auditor Interno", file: "/certificados/iso9001.jpg", cat: "industria" },
   // Mentoría
   { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "lobomentoria" },
+  { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "lobomentoria" },
+  { title: "Fundamentals of Project Management", file: "/certificados/fundamentals.jpg", cat: "lobomentoria" },
   // Finanzas
   { title: "GOB Diplomado en educación financiera", file: "/certificados/gob-diplomado-en-educacion-financiera.jpg", cat: "finanzas" },
   { title: "Análisis de mercado", file: "/certificados/analisis-de-mercado.jpg", cat: "finanzas" },
@@ -161,36 +170,120 @@ function ExpCard({
         <p className="text-sm font-medium text-blue-600 dark:text-blue-400">{item.tag}</p>
         <h3 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">{item.title}</h3>
         <p className="mt-2 text-neutral-500">{item.org}</p>
-        <p className="mt-6 max-w-md text-lg leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <p className="mt-6 max-w-lg text-lg leading-relaxed text-neutral-700 dark:text-neutral-300">
           {item.desc}
         </p>
+        <ul className="mt-5 max-w-lg space-y-3 text-neutral-600 dark:text-neutral-400">
+          {item.bullets.map((b) => (
+            <li key={b} className="flex gap-3">
+              <span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+              {b}
+            </li>
+          ))}
+        </ul>
       </Reveal>
     </div>
   );
 }
 
 /* ───────────── Línea infinita de habilidades ───────────── */
-function Marquee({ items }: { items: string[] }) {
-  const loop = [...items, ...items];
+function Marquee({
+  items,
+  label,
+  prev,
+  next,
+}: {
+  items: string[];
+  label: string;
+  prev: string;
+  next: string;
+}) {
+  const reduce = useReducedMotion();
+  const x = useMotionValue(0);
+  const list = useRef<HTMLUListElement>(null);
+  const dragging = useRef(false);
+  const busy = useRef(false);
+  const resumeAt = useRef(0);
+  const loop = [...items, ...items, ...items]; // 3 copias: el salto de reinicio es invisible
+  const hold = (ms: number) => (resumeAt.current = performance.now() + ms);
+
+  // Avance automático de derecha a izquierda (se pausa al interactuar)
+  useAnimationFrame((_, delta) => {
+    const el = list.current;
+    if (!el || dragging.current || busy.current) return;
+    const W = el.scrollWidth / 3;
+    let v = x.get();
+    if (!reduce && performance.now() >= resumeAt.current) v -= delta * 0.04;
+    if (v <= -2 * W) v += W;
+    if (v >= 0) v -= W;
+    if (v !== x.get()) x.set(v);
+  });
+
+  const step = (dir: 1 | -1) => {
+    busy.current = true;
+    hold(2500);
+    animate(x, x.get() + dir * 360, {
+      duration: 0.4,
+      ease: "easeOut",
+      onComplete: () => {
+        busy.current = false;
+      },
+    });
+  };
+
+  const arrow =
+    "absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/70 text-2xl backdrop-blur-xl transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:border-white/15 dark:bg-white/10 dark:hover:bg-white/20";
+
   return (
-    <div className="marquee-wrap relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-6 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-      <style>{`
-        @keyframes marquee { to { transform: translateX(-50%); } }
-        .marquee { width: max-content; animation: marquee 50s linear infinite; }
-        .marquee-wrap:hover .marquee { animation-play-state: paused; }
-        @media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
-      `}</style>
-      <ul className="marquee flex">
-        {loop.map((s, i) => (
-          <li
-            key={i}
-            aria-hidden={i >= items.length}
-            className="mr-4 shrink-0 rounded-full border border-black/10 bg-white/70 px-7 py-3 text-lg backdrop-blur-md dark:border-white/15 dark:bg-white/10"
-          >
-            {s}
-          </li>
-        ))}
-      </ul>
+    <div
+      className="relative left-1/2 w-screen -translate-x-1/2 py-6"
+      onPointerEnter={(e) => e.pointerType === "mouse" && hold(Infinity)}
+      onPointerLeave={() => hold(800)}
+    >
+      <div
+        role="region"
+        aria-label={label}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") step(1);
+          if (e.key === "ArrowRight") step(-1);
+        }}
+        onFocus={() => hold(Infinity)}
+        onBlur={() => hold(800)}
+        className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] focus-visible:outline-none"
+      >
+        <motion.ul
+          ref={list}
+          style={{ x }}
+          drag="x"
+          dragMomentum={false}
+          dragElastic={0}
+          onDragStart={() => {
+            dragging.current = true;
+          }}
+          onDragEnd={() => {
+            dragging.current = false;
+            hold(2500);
+          }}
+          className="flex w-max cursor-grab select-none active:cursor-grabbing"
+        >
+          {loop.map((s, i) => (
+            <li
+              key={i}
+              aria-hidden={i >= items.length}
+              className="mr-4 shrink-0 rounded-full border border-black/10 bg-white/70 px-7 py-3 text-lg backdrop-blur-md dark:border-white/15 dark:bg-white/10"
+            >
+              {s}
+            </li>
+          ))}
+        </motion.ul>
+      </div>
+      <button onClick={() => step(1)} aria-label={prev} className={`${arrow} left-4 md:left-8`}>
+        ‹
+      </button>
+      <button onClick={() => step(-1)} aria-label={next} className={`${arrow} right-4 md:right-8`}>
+        ›
+      </button>
     </div>
   );
 }
@@ -244,6 +337,50 @@ function FloatingWords({ words }: { words: string[] }) {
   );
 }
 
+/* ───────────── Próximos proyectos ───────────── */
+// Imágenes en public/proyectos/ — el orden coincide con blog.cases en i18n.ts
+const PROJECT_IMAGES = [
+  "/proyectos/green-belt.jpg",
+  "/proyectos/monitoreo-esp32-labview.jpg",
+  "/proyectos/diseno-3d-solidworks.jpg",
+  "/proyectos/proyecto-a3-mejora-continua.jpg",
+  "/proyectos/vsm-balanceo-de-linea.jpg",
+  "/proyectos/automatizacion-robot-industrial.jpg",
+];
+const PROJECT_SPANS = ["md:col-span-2 md:row-span-2", "", "", "md:col-span-2", "", "md:col-span-2"];
+
+function ProjectTile({
+  src,
+  label,
+  delay,
+  className,
+}: {
+  src: string;
+  label: string;
+  delay: number;
+  className: string;
+}) {
+  const [broken, setBroken] = useState(false);
+  return (
+    <Reveal delay={delay} className={`group relative overflow-hidden ${glass} ${className}`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-300/60 to-neutral-100/20 dark:from-white/10 dark:to-transparent" />
+      {!broken && (
+        <Image
+          src={src}
+          alt={label}
+          fill
+          sizes="(min-width:768px) 40vw, 50vw"
+          className="object-cover transition duration-500 group-hover:scale-105"
+          onError={() => setBroken(true)}
+        />
+      )}
+      <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-sm font-medium text-white">
+        {label}
+      </p>
+    </Reveal>
+  );
+}
+
 /* ───────────── Hero ───────────── */
 function Hero({ t }: { t: Dict }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -254,43 +391,58 @@ function Hero({ t }: { t: Dict }) {
 
   const scale = useTransform(scrollYProgress, [0, 0.6], [1, 0.42]);
   const radius = useTransform(scrollYProgress, [0, 0.6], [0, 48]);
-  const y = useTransform(scrollYProgress, [0, 0.6], ["0vh", "-6vh"]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const titleY = useTransform(scrollYProgress, [0, 0.3], [0, -60]);
-  const captionOpacity = useTransform(scrollYProgress, [0.5, 0.8], [0, 1]);
-  const captionY = useTransform(scrollYProgress, [0.5, 0.8], [40, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.6], ["0vh", "-12vh"]);
+  // Texto inicial sobre el video (se desvanece al hacer scroll)
+  const introOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const introY = useTransform(scrollYProgress, [0, 0.3], [0, -60]);
+  // Bloque final bajo el video: frase + nombre + título (aparece y se queda)
+  const outroOpacity = useTransform(scrollYProgress, [0.5, 0.8], [0, 1]);
+  const outroY = useTransform(scrollYProgress, [0.5, 0.8], [40, 0]);
 
   return (
     <section ref={ref} className="relative h-[240vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        {/* Video: reemplaza el placeholder por <video autoPlay muted loop playsInline src="/hero.mp4" className="h-full w-full object-cover" /> */}
+        {/* Video: guarda tu archivo en public/hero.mp4 (y opcional public/hero-poster.jpg) */}
         <motion.div
           style={{ scale, borderRadius: radius, y }}
-          className="relative h-[100vh] w-[100vw] origin-center overflow-hidden bg-gradient-to-br from-neutral-200 via-neutral-100 to-white shadow-2xl dark:from-neutral-800 dark:via-neutral-900 dark:to-black"
+          className="relative h-[100vh] w-[100vw] origin-center overflow-hidden bg-neutral-900 shadow-2xl"
         >
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(41,151,255,0.35),transparent)]"
-          />
-          <p className="absolute bottom-6 right-8 text-sm text-neutral-500">{t.hero.video}</p>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/hero-poster.jpg"
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+          <div aria-hidden className="absolute inset-0 bg-black/30" />
         </motion.div>
 
         <motion.div
-          style={{ opacity: titleOpacity, y: titleY }}
-          className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+          style={{ opacity: introOpacity, y: introY }}
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"
         >
-          <h1 className="text-5xl font-semibold tracking-tight md:text-8xl">{t.hero.name}</h1>
-          <p className="mt-6 max-w-3xl text-lg text-neutral-600 md:text-2xl dark:text-neutral-300">
+          <h1 className="text-5xl font-semibold tracking-tight text-white md:text-8xl">
+            {t.hero.name}
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg text-white/80 md:text-2xl">{t.hero.role}</p>
+        </motion.div>
+
+        <motion.div
+          style={{ opacity: outroOpacity, y: outroY }}
+          className="absolute inset-x-0 bottom-[6vh] z-10 flex flex-col items-center px-6 text-center"
+        >
+          <p className="text-lg font-medium tracking-tight text-neutral-500 md:text-2xl dark:text-neutral-400">
+            {t.hero.caption}
+          </p>
+          <p className="mt-4 text-4xl font-semibold tracking-tight md:text-7xl">{t.hero.name}</p>
+          <p className="mt-3 max-w-3xl text-base text-neutral-600 md:text-xl dark:text-neutral-300">
             {t.hero.role}
           </p>
         </motion.div>
-
-        <motion.p
-          style={{ opacity: captionOpacity, y: captionY }}
-          className="absolute bottom-[10vh] px-6 text-center text-2xl font-medium tracking-tight md:text-4xl"
-        >
-          {t.hero.caption}
-        </motion.p>
       </div>
     </section>
   );
@@ -317,8 +469,8 @@ export default function Page() {
   }, [active]);
 
   const visible = certificados.filter((c) => c.cat === tab);
-  const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-2", "md:col-span-2", "md:col-span-2"];
-
+   const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-6"];
+   
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#f5f5f7] text-neutral-900 antialiased dark:bg-black dark:text-neutral-100">
       <FloatingWords words={t.words} />
@@ -423,7 +575,7 @@ export default function Page() {
                 className={
                   tab === "finanzas"
                     ? "grid max-h-[34rem] grid-cols-2 gap-3 overflow-y-auto pr-2 md:grid-cols-4 lg:grid-cols-5"
-                    : "grid gap-4 md:grid-cols-3"
+                    : "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                 }
               >
                 {visible.map((c) => (
@@ -435,10 +587,10 @@ export default function Page() {
 
           {/* Habilidades en movimiento */}
           <section className="py-24">
-            <Marquee items={t.skills.cats.flatMap((c) => c.items)} />
+            <Marquee items={t.marquee} label={t.skills.title} prev={t.nav.prev} next={t.nav.next} />
           </section>
 
-          {/* Blog — casos de estudio */}
+          {/* Próximos proyectos */}
           <section className="py-32">
             <div className="mb-12 flex items-end justify-between gap-4">
               <Reveal>
@@ -450,17 +602,7 @@ export default function Page() {
             </div>
             <div className="grid auto-rows-[12rem] grid-cols-2 gap-4 md:grid-cols-4">
               {t.blog.cases.map((c, i) => (
-                <Reveal
-                  key={c}
-                  delay={i * 0.05}
-                  className={`relative overflow-hidden ${glass} ${
-                    ["md:col-span-2 md:row-span-2", "", "", "md:col-span-2", "", "md:col-span-2"][i]
-                  }`}
-                >
-                  {/* Reemplaza por <Image src="/cases/..." fill className="object-cover" alt={c} /> */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-neutral-300/60 to-neutral-100/20 dark:from-white/10 dark:to-transparent" />
-                  <p className="absolute bottom-4 left-5 text-sm font-medium">{c}</p>
-                </Reveal>
+                <ProjectTile key={c} src={PROJECT_IMAGES[i]} label={c} delay={i * 0.05} className={PROJECT_SPANS[i]} />
               ))}
             </div>
           </section>
