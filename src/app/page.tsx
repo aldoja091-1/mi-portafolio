@@ -28,7 +28,7 @@ const certificados: Cert[] = [
   { title: "Yellow Belt", file: "/certificados/yellow-belt.jpg", cat: "industria" },
   { title: "Gestión de Proyectos y Fundamentos de Metodología Agile", file: "/certificados/agile.jpg", cat: "industria" },
   { title: "Power BI", file: "/certificados/powerbi.jpg", cat: "industria" },
-  { title: "ISO 9001:2015 Auditor Interno", file: "/certificados/iso9001.jpg", cat: "industria" },
+  { title: "ISO 9001:2015 Auditor Interno con DC-3", file: "/certificados/iso9001.jpg", cat: "industria" },
   // Mentoría
   { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "lobomentoria" },
   { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "lobomentoria" },
@@ -341,11 +341,11 @@ function FloatingWords({ words }: { words: string[] }) {
 // Imágenes en public/proyectos/ — el orden coincide con blog.cases en i18n.ts
 const PROJECT_IMAGES = [
   "/proyectos/green-belt.jpg",
-  "/proyectos/monitoreo-esp32-labview.jpg",
-  "/proyectos/diseno-3d-solidworks.jpg",
-  "/proyectos/proyecto-a3-mejora-continua.jpg",
-  "/proyectos/vsm-balanceo-de-linea.jpg",
-  "/proyectos/automatizacion-robot-industrial.jpg",
+  "/proyectos/andon.jpg",
+  "/proyectos/poka-yoke.jpg",
+  "/proyectos/lean.jpg",
+  "/proyectos/scrum.jpg",
+  "/proyectos/7tools.jpg",
 ];
 const PROJECT_SPANS = ["md:col-span-2 md:row-span-2", "", "", "md:col-span-2", "", "md:col-span-2"];
 

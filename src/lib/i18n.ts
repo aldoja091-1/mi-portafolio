@@ -48,9 +48,9 @@ export const es = {
         tag: "Desarrollo de Software",
         org: "Python · API de Binance · Proyecto personal",
         title: "Bot de Trading Algorítmico y Portafolio de acciones",
-        desc: "Proyecto personal en fase de pruebas (Testnet de Binance): un bot en Python que opera a partir de indicadores técnicos y un portfolio de acciones con seguimiento de precios y rentabilidad personalizada.",
+        desc: "Proyecto personal: un bot en Python que opera a partir de indicadores técnicos y un portfolio de acciones con seguimiento de precios y rentabilidad personalizada.",
         bullets: [
-          "Integración con la API de Binance en entorno de pruebas.",
+          "Integración con la API de Binance.",
           "Señales de entrada por puntuación de indicadores técnicos.",
           "Gestión de riesgo con trailing stop basado en ATR.",
           "Seguimiento de precios y rentabilidad de trading de acciones con visualización grafica",
@@ -156,7 +156,7 @@ export const es = {
   blog: {
     title: "Próximos proyectos",
     soon: "Próximamente",
-    cases: ["Green Belt · Lean Six Sigma", "Monitoreo de sensores · ESP32 y LabVIEW", "Diseño y simulación · SolidWorks", "Proyecto A3 · Mejora continua", "VSM y balanceo de línea", "Celda con robot industrial"],
+    cases: ["Green Belt · Lean Six Sigma", "Sistema Andon", "Poka-Yoke", "Lean Manufacturing", "Metodología SCRUM", "7 Herramientas de Calidad"],
   },
   marquee: ["AMEF", "5 Porqués", "Análisis de Causa Raíz", "Reducción de Desperdicio", "Identificación de Cuellos de Botella", "Estandarización de Procesos", "Aseguramiento de Calidad", "Seguimiento de Procesos", "Resolución de Problemas", "Lean Manufacturing", "Lean Six Sigma (White Belt)", "5S", "Gestión Visual", "Mejora Continua", "Metodología Ágil", "Gestión de Proyectos", "Sistemas de Control", "Robótica Industrial", "Adquisición de Datos de Sensores", "Desarrollo de Firmware", "ESP32", "Arduino", "LabVIEW", "Mantenimiento Preventivo y Correctivo", "Diagnóstico de Fallas", "Python", "C", "MATLAB", "Power BI", "Excel", "SAP", "PLATO", "CATIA", "SolidWorks", "CAD/CAM", "Sistema PDCA", "Planeación de Objetivos OGSM", "Definición de Indicadores", "Trabajo Estándar", "Recorridos Gemba", "7+1 Desperdicios", "Andon y Fish Market", "Matriz de Selección de Proyectos", "Costos de No Calidad", "Solución de Problemas A3", "Definición de Problema", "VSM y Swimlane", "Lluvia de Ideas", "Árbol Causal", "Ishikawa", "Pareto", "Objetivos SMART", "Kanban", "Diagrama de Spaghetti", "Balanceo de Proceso", "Supermarket", "Jidoka", "Poka-Yoke", "Heijunka", "SMED", "TPM", "Plan de Acción / Gantt", "Plan de Control"],
   words: ["Lean", "Six Sigma", "Kaizen", "5S", "Poka-Yoke", "OEE", "Gemba", "AMEF", "5 Porqués", "Causa Raíz", "Mejora Continua", "Calidad", "Desperdicio", "Estandarización", "Gestión Visual", "Kanban", "Muda", "Takt Time", "SMED", "DMAIC", "PDCA", "Jidoka", "Heijunka", "A3", "Ishikawa", "Pareto", "Andon", "TPM"],
@@ -215,9 +215,9 @@ export const en: Dict = {
         tag: "Software Development",
         org: "Python · Binance API · Personal project",
         title: "Algorithmic Trading Bot and Stock Portfolio",
-        desc: "Personal project currently in the testing phase (Binance Testnet): a Python-based bot that trades using technical indicators, alongside a stock portfolio featuring price tracking and custom profitability metrics.",
+        desc: "Personal project: a Python-based bot that trades using technical indicators, alongside a stock portfolio featuring price tracking and custom profitability metrics.",
         bullets: [
-          "Binance API integration in a test environment.",
+          "Binance API integration.",
           "Entry signals based on a technical indicator score.",
           "Risk management with an ATR-based trailing stop.",
           "Stock price and trading profitability tracking with data visualization.",
@@ -323,7 +323,7 @@ export const en: Dict = {
   blog: {
     title: "Upcoming projects",
     soon: "Coming soon",
-    cases: ["Green Belt · Lean Six Sigma", "Sensor Monitoring · ESP32 & LabVIEW", "Design & Simulation · SolidWorks", "A3 Project · Continuous Improvement", "VSM & Line Balancing", "Industrial Robot Cell"],
+    cases: ["Green Belt · Lean Six Sigma", "Andon System", "Poka-Yoke", "Lean Manufacturing", "SCRUM Methodology", "7 Quality Tools"],
   },
   marquee: ["FMEA", "5 Whys", "Root Cause Analysis", "Waste Reduction", "Bottleneck Identification", "Process Standardization", "Quality Assurance", "Process Monitoring", "Problem Solving", "Lean Manufacturing", "Lean Six Sigma (White Belt)", "5S", "Visual Management", "Continuous Improvement", "Agile Methodology", "Project Management", "Control Systems", "Industrial Robotics", "Sensor Data Acquisition", "Firmware Development", "ESP32", "Arduino", "LabVIEW", "Preventive & Corrective Maintenance", "Fault Diagnosis", "Python", "C", "MATLAB", "Power BI", "Excel", "SAP", "PLATO", "CATIA", "SolidWorks", "CAD/CAM", "PDCA System", "OGSM Objective Planning", "Indicator Definition", "Standard Work", "Gemba Walks", "7+1 Wastes", "Andon & Fish Market", "Project Selection Matrix", "Cost of Poor Quality", "A3 Problem Solving", "Problem Definition", "VSM & Swimlane", "Brainstorming", "Causal Tree", "Ishikawa Diagram", "Pareto Analysis", "SMART Objectives", "Kanban", "Spaghetti Diagram", "Process Balancing", "Supermarket", "Jidoka", "Poka-Yoke", "Heijunka", "SMED", "TPM", "Action Plan / Gantt", "Control Plan"],
   words: ["Lean", "Six Sigma", "Kaizen", "5S", "Poka-Yoke", "OEE", "Gemba", "FMEA", "5 Whys", "Root Cause", "Continuous Improvement", "Quality", "Waste", "Standardization", "Visual Management", "Kanban", "Muda", "Takt Time", "SMED", "DMAIC", "PDCA", "Jidoka", "Heijunka", "A3", "Ishikawa", "Pareto", "Andon", "TPM"],
