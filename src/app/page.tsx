@@ -28,7 +28,7 @@ const certificados: Cert[] = [
   { title: "Yellow Belt", file: "/certificados/yellow-belt.jpg", cat: "industria" },
   { title: "Gestión de Proyectos y Fundamentos de Metodología Agile", file: "/certificados/agile.jpg", cat: "industria" },
   { title: "Power BI", file: "/certificados/powerbi.jpg", cat: "industria" },
-  { title: "ISO 9001:2015 Auditor Interno con DC-3", file: "/certificados/iso9001.jpg", cat: "industria" },
+  { title: "ISO 9001:2015 Auditor Interno", file: "/certificados/iso9001.jpg", cat: "industria" },
   // Mentoría
   { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "lobomentoria" },
   { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "lobomentoria" },
@@ -381,6 +381,36 @@ function ProjectTile({
   );
 }
 
+/* ───────────── Proporción de tu video ─────────────
+   Ancho ÷ alto del archivo. Ejemplos: 1920×1080 → 16 / 9 · 1920×960 → 2 · 1920×800 → 2.4
+   (Windows: clic derecho al video → Propiedades → Detalles → "Ancho/Alto del fotograma") */
+const VIDEO_RATIO = 1462 / 770;
+
+/* ───────────── Tamaño final del video ───────────── */
+// Calcula a qué escala y a qué altura debe quedar el video al reducirse:
+// ~75 % del ancho (92 % en celular), pero sin invadir el bloque de texto de abajo.
+function useHeroSizes() {
+  const [s, setS] = useState({ scale: 0.7, y: -120 });
+  useEffect(() => {
+    const calc = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const phone = vw < 768;
+      const startW = Math.min(vw, vh * VIDEO_RATIO); // mayor recuadro con la proporción del video
+      const top = 72; // margen superior (debajo del header)
+      const reserve = phone ? 340 : 290; // espacio para frase + nombre + título + flecha
+      const cap = (vh - reserve - top) * VIDEO_RATIO;
+      const endW = Math.max(Math.min(vw * (phone ? 0.92 : 0.75), cap), vw * 0.3);
+      const endH = endW / VIDEO_RATIO;
+      setS({ scale: endW / startW, y: top + endH / 2 - vh / 2 });
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
+  return s;
+}
+
 /* ───────────── Hero ───────────── */
 function Hero({ t }: { t: Dict }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -390,9 +420,11 @@ function Hero({ t }: { t: Dict }) {
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.55], [1, 0.42]);
-  const radius = useTransform(scrollYProgress, [0, 0.55], [0, 48]);
-  const y = useTransform(scrollYProgress, [0, 0.55], ["0vh", "-12vh"]);
+  const sizes = useHeroSizes();
+  const scale = useTransform(scrollYProgress, [0, 0.55], [1, sizes.scale]);
+  const radius = useTransform(scrollYProgress, [0, 0.55], [0, 40]);
+  const y = useTransform(scrollYProgress, [0, 0.55], [0, sizes.y]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]); // barras negras iniciales
   // Bloque final bajo el video: termina antes de que el hero se suelte
   const outroOpacity = useTransform(scrollYProgress, [0.45, 0.8], [0, 1]);
   const outroY = useTransform(scrollYProgress, [0.45, 0.8], [40, 0]);
@@ -400,10 +432,19 @@ function Hero({ t }: { t: Dict }) {
   return (
     <section ref={ref} className="relative h-[200vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        {/* Video: guarda tu archivo en public/hero.mp4 (y opcional public/hero-poster.jpg) */}
+        {/* Fondo negro inicial (barras si la pantalla no es 16:9); se desvanece al hacer scroll */}
+        <motion.div aria-hidden style={{ opacity: bgOpacity }} className="absolute inset-0 bg-black" />
+
+        {/* Video completo, sin recortar: public/hero.mp4 (y opcional public/hero-poster.jpg) */}
         <motion.div
-          style={{ scale, borderRadius: radius, y }}
-          className="relative h-[100vh] w-[100vw] origin-center overflow-hidden bg-neutral-900 shadow-2xl"
+          style={{
+            scale,
+            borderRadius: radius,
+            y,
+            aspectRatio: VIDEO_RATIO,
+            width: `min(100vw, calc(100svh * ${VIDEO_RATIO}))`,
+          }}
+          className="relative origin-center overflow-hidden bg-neutral-900 shadow-2xl"
         >
           <video
             autoPlay
@@ -412,11 +453,10 @@ function Hero({ t }: { t: Dict }) {
             playsInline
             preload="metadata"
             poster="/hero-poster.jpg"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain"
           >
             <source src="/hero.mp4" type="video/mp4" />
           </video>
-          <div aria-hidden className="absolute inset-0 bg-black/30" />
         </motion.div>
 
         <motion.div
