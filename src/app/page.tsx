@@ -28,7 +28,7 @@ const certificados: Cert[] = [
   { title: "Yellow Belt", file: "/certificados/yellow-belt.jpg", cat: "industria" },
   { title: "Gestión de Proyectos y Fundamentos de Metodología Agile", file: "/certificados/agile.jpg", cat: "industria" },
   { title: "Power BI", file: "/certificados/powerbi.jpg", cat: "industria" },
-  { title: "ISO 9001:2015 Auditor Interno", file: "/certificados/iso9001.jpg", cat: "industria" },
+  { title: "ISO 9001:2015 Auditor Interno con DC-3", file: "/certificados/iso9001.jpg", cat: "industria" },
   // Mentoría
   { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "lobomentoria" },
   { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "lobomentoria" },
@@ -384,23 +384,21 @@ function ProjectTile({
 /* ───────────── Hero ───────────── */
 function Hero({ t }: { t: Dict }) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.6], [1, 0.42]);
-  const radius = useTransform(scrollYProgress, [0, 0.6], [0, 48]);
-  const y = useTransform(scrollYProgress, [0, 0.6], ["0vh", "-12vh"]);
-  // Texto inicial sobre el video (se desvanece al hacer scroll)
-  const introOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const introY = useTransform(scrollYProgress, [0, 0.3], [0, -60]);
-  // Bloque final bajo el video: frase + nombre + título (aparece y se queda)
-  const outroOpacity = useTransform(scrollYProgress, [0.5, 0.8], [0, 1]);
-  const outroY = useTransform(scrollYProgress, [0.5, 0.8], [40, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.55], [1, 0.42]);
+  const radius = useTransform(scrollYProgress, [0, 0.55], [0, 48]);
+  const y = useTransform(scrollYProgress, [0, 0.55], ["0vh", "-12vh"]);
+  // Bloque final bajo el video: termina antes de que el hero se suelte
+  const outroOpacity = useTransform(scrollYProgress, [0.45, 0.8], [0, 1]);
+  const outroY = useTransform(scrollYProgress, [0.45, 0.8], [40, 0]);
 
   return (
-    <section ref={ref} className="relative h-[240vh]">
+    <section ref={ref} className="relative h-[200vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
         {/* Video: guarda tu archivo en public/hero.mp4 (y opcional public/hero-poster.jpg) */}
         <motion.div
@@ -422,26 +420,32 @@ function Hero({ t }: { t: Dict }) {
         </motion.div>
 
         <motion.div
-          style={{ opacity: introOpacity, y: introY }}
-          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"
-        >
-          <h1 className="text-5xl font-semibold tracking-tight text-white md:text-8xl">
-            {t.hero.name}
-          </h1>
-          <p className="mt-6 max-w-3xl text-lg text-white/80 md:text-2xl">{t.hero.role}</p>
-        </motion.div>
-
-        <motion.div
           style={{ opacity: outroOpacity, y: outroY }}
-          className="absolute inset-x-0 bottom-[6vh] z-10 flex flex-col items-center px-6 text-center"
+          className="absolute inset-x-0 bottom-[4vh] z-10 flex flex-col items-center px-6 text-center"
         >
           <p className="text-lg font-medium tracking-tight text-neutral-500 md:text-2xl dark:text-neutral-400">
             {t.hero.caption}
           </p>
-          <p className="mt-4 text-4xl font-semibold tracking-tight md:text-7xl">{t.hero.name}</p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-7xl">{t.hero.name}</h1>
           <p className="mt-3 max-w-3xl text-base text-neutral-600 md:text-xl dark:text-neutral-300">
             {t.hero.role}
           </p>
+          <motion.svg
+            aria-hidden
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            animate={reduce ? undefined : { y: [0, 8, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            className="mt-5 text-neutral-500"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </motion.svg>
         </motion.div>
       </div>
     </section>
@@ -472,7 +476,7 @@ export default function Page() {
    const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-6"];
    
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#f5f5f7] text-neutral-900 antialiased dark:bg-black dark:text-neutral-100">
+    <main className="relative min-h-screen overflow-x-clip bg-[#f5f5f7] text-neutral-900 antialiased dark:bg-black dark:text-neutral-100">
       <FloatingWords words={t.words} />
 
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-4">
@@ -497,7 +501,7 @@ export default function Page() {
 
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           {/* Experiencia */}
-          <section className="py-32">
+          <section id="experiencia" className="pb-32 pt-24">
             <SectionTitle>{t.exp.title}</SectionTitle>
             <div className="space-y-24 md:space-y-32">
               {t.exp.items.map((p, i) => (
