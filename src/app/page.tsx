@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   AnimatePresence,
   animate,
   motion,
+  type PanInfo,
   useAnimationFrame,
   useMotionValue,
   useReducedMotion,
@@ -493,16 +494,43 @@ function Hero({ t }: { t: Dict }) {
 }
 
 /* ───────────── Página ───────────── */
+// Animación de deslizamiento del visor de certificados
+const slide = {
+  enter: (d: number) => ({ x: d > 0 ? 160 : d < 0 ? -160 : 0, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (d: number) => ({ x: d > 0 ? -160 : d < 0 ? 160 : 0, opacity: 0 }),
+};
+
 export default function Page() {
   const [lang, setLang] = useState<Lang>("es");
   const [tab, setTab] = useState<CertCat>("industria");
-  const [active, setActive] = useState<Cert | null>(null);
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [dir, setDir] = useState(0);
   const t = dict[lang];
 
-  // Lightbox: cerrar con Escape y bloquear scroll del fondo
+  // Certificados de la pestaña activa: el visor navega solo dentro de esta lista
+  const visible = useMemo(() => certificados.filter((c) => c.cat === tab), [tab]);
+  const n = visible.length;
+  const isOpen = openIdx !== null;
+  const active = openIdx === null ? null : visible[openIdx];
+
+  // Anterior / siguiente con salto circular (del último al primero y viceversa)
+  const go = useCallback(
+    (d: 1 | -1) => {
+      setDir(d);
+      setOpenIdx((i) => (i === null ? i : (i + d + n) % n));
+    },
+    [n]
+  );
+
+  // Visor: Esc cierra, ← → navegan, y se bloquea el scroll del fondo
   useEffect(() => {
-    if (!active) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setActive(null);
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenIdx(null);
+      if (e.key === "ArrowRight" && n > 1) go(1);
+      if (e.key === "ArrowLeft" && n > 1) go(-1);
+    };
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -510,9 +538,16 @@ export default function Page() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [active]);
+  }, [isOpen, n, go]);
 
-  const visible = certificados.filter((c) => c.cat === tab);
+  // Precarga la imagen anterior y la siguiente para que el cambio sea inmediato
+  useEffect(() => {
+    if (openIdx === null || n < 2) return;
+    [1, -1].forEach((d) => {
+      const im = new window.Image();
+      im.src = visible[(openIdx + d + n) % n].file;
+    });
+  }, [openIdx, n, visible]);
    const spans = ["md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-3", "md:col-span-6"];
    
   return (
@@ -622,8 +657,15 @@ export default function Page() {
                     : "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
                 }
               >
-                {visible.map((c) => (
-                  <Thumb key={c.file} cert={c} onOpen={() => setActive(c)} />
+                {visible.map((c, i) => (
+                  <Thumb
+                    key={c.file}
+                    cert={c}
+                    onOpen={() => {
+                      setDir(0);
+                      setOpenIdx(i);
+                    }}
+                  />
                 ))}
               </motion.div>
             </AnimatePresence>
@@ -657,9 +699,9 @@ export default function Page() {
         </footer>
       </div>
 
-      {/* Lightbox */}
+      {/* Visor de certificados */}
       <AnimatePresence>
-        {active && (
+        {active && openIdx !== null && (
           <motion.div
             key="lightbox"
             role="dialog"
@@ -668,7 +710,7 @@ export default function Page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
+            onClick={() => setOpenIdx(null)}
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md"
           >
             <motion.div
@@ -679,15 +721,40 @@ export default function Page() {
               onClick={(e) => e.stopPropagation()}
               className="relative h-[78vh] w-[92vw] max-w-5xl"
             >
-              <Image
-                src={active.file}
-                alt={active.title}
-                fill
-                sizes="92vw"
-                className="rounded-2xl object-contain"
-              />
+              <AnimatePresence initial={false} custom={dir}>
+                <motion.div
+                  key={active.file}
+                  custom={dir}
+                  variants={slide}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  drag={n > 1 ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.6}
+                  onDragEnd={(_, info: PanInfo) => {
+                    if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 500) {
+                      go(info.offset.x < 0 ? 1 : -1);
+                    }
+                  }}
+                  className={`absolute inset-0 ${n > 1 ? "cursor-grab active:cursor-grabbing" : ""}`}
+                >
+                  <Image
+                    src={active.file}
+                    alt={active.title}
+                    fill
+                    sizes="92vw"
+                    draggable={false}
+                    className="rounded-2xl object-contain"
+                  />
+                </motion.div>
+              </AnimatePresence>
+              <span className="absolute -top-12 left-0 text-sm text-white/80">
+                {openIdx + 1} / {n}
+              </span>
               <button
-                onClick={() => setActive(null)}
+                onClick={() => setOpenIdx(null)}
                 aria-label={t.learn.close}
                 className="absolute -top-12 right-0 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white backdrop-blur-md hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
               >
@@ -695,6 +762,31 @@ export default function Page() {
               </button>
               <p className="absolute -bottom-10 inset-x-0 text-center text-sm text-white">{active.title}</p>
             </motion.div>
+
+            {n > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    go(-1);
+                  }}
+                  aria-label={t.nav.prev}
+                  className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-3xl text-white backdrop-blur-md hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white md:left-6"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    go(1);
+                  }}
+                  aria-label={t.nav.next}
+                  className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/10 text-3xl text-white backdrop-blur-md hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white md:right-6"
+                >
+                  ›
+                </button>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
