@@ -18,7 +18,7 @@ import { dict, type Lang } from "@/lib/i18n";
 type Dict = (typeof dict)[Lang];
 
 /* ───────────── Datos de certificados ───────────── */
-type CertCat = "industria" | "lobomentoria" | "finanzas";
+type CertCat = "industria" | "Mentoria" | "finanzas";
 type Cert = { title: string; file: string; cat: CertCat };
 
 const certificados: Cert[] = [
@@ -30,10 +30,13 @@ const certificados: Cert[] = [
   { title: "Gestión de Proyectos y Fundamentos de Metodología Agile", file: "/certificados/agile.jpg", cat: "industria" },
   { title: "Power BI", file: "/certificados/powerbi.jpg", cat: "industria" },
   { title: "ISO 9001:2015 Auditor Interno con DC-3", file: "/certificados/iso9001.jpg", cat: "industria" },
+  { title: "Sistema Andon", file: "/certificados/andon.jpg", cat: "industria" },
+  { title: "POKA YOKE", file: "/certificados/poka-yoke.jpg", cat: "industria" },
   // Mentoría
-  { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "lobomentoria" },
-  { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "lobomentoria" },
-  { title: "Fundamentals of Project Management", file: "/certificados/fundamentals.jpg", cat: "lobomentoria" },
+  { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "Mentoria" },
+  { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "Mentoria" },
+  { title: "Fundamentals of Project Management", file: "/certificados/fundamentals.jpg", cat: "Mentoria" },
+  { title: "Agentes de IA en la práctica", file: "/certificados/AgentesIA.jpg", cat: "Mentoria" },
   // Finanzas
   { title: "GOB Diplomado en educación financiera", file: "/certificados/gob-diplomado-en-educacion-financiera.jpg", cat: "finanzas" },
   { title: "Análisis de mercado", file: "/certificados/analisis-de-mercado.jpg", cat: "finanzas" },
@@ -59,7 +62,7 @@ const certificados: Cert[] = [
   { title: "Valuación de empresas", file: "/certificados/valuacion-de-empresas.jpg", cat: "finanzas" },
 ];
 
-const TABS: CertCat[] = ["industria", "lobomentoria", "finanzas"];
+const TABS: CertCat[] = ["industria", "Mentoria", "finanzas"];
 
 /* ───────────── Utilidades ───────────── */
 const glass =
@@ -342,8 +345,8 @@ function FloatingWords({ words }: { words: string[] }) {
 // Imágenes en public/proyectos/ — el orden coincide con blog.cases en i18n.ts
 const PROJECT_IMAGES = [
   "/proyectos/green-belt.jpg",
-  "/proyectos/andon.jpg",
-  "/proyectos/poka-yoke.jpg",
+  "/proyectos/8-desperdicios.jpg",
+  "/proyectos/kanban.jpg",
   "/proyectos/lean.jpg",
   "/proyectos/scrum.jpg",
   "/proyectos/7tools.jpg",
