@@ -32,6 +32,8 @@ const certificados: Cert[] = [
   { title: "ISO 9001:2015 Auditor Interno con DC-3", file: "/certificados/iso9001.jpg", cat: "industria" },
   { title: "Sistema Andon", file: "/certificados/andon.jpg", cat: "industria" },
   { title: "POKA YOKE", file: "/certificados/poka-yoke.jpg", cat: "industria" },
+  { title: "Metodología SCRUM", file: "/certificados/scrum.jpg", cat: "industria" },
+  { title: "7 Herramientas de Calidad", file: "/certificados/7-herramientas.jpg", cat: "industria" },
   // Mentoría
   { title: "Constancia Formación Inicial de Lobomentoría", file: "/certificados/constancia-formacion-inicial-de-lobomentoria.jpg", cat: "Mentoria" },
   { title: "Tutoría y Mentoría", file: "/certificados/tutoria.jpg", cat: "Mentoria" },
@@ -348,8 +350,8 @@ const PROJECT_IMAGES = [
   "/proyectos/8-desperdicios.jpg",
   "/proyectos/kanban.jpg",
   "/proyectos/lean.jpg",
-  "/proyectos/scrum.jpg",
-  "/proyectos/7tools.jpg",
+  "/proyectos/gesinv.jpg",
+  "/proyectos/ppap.jpg",
 ];
 const PROJECT_SPANS = ["md:col-span-2 md:row-span-2", "", "", "md:col-span-2", "", "md:col-span-2"];
 
